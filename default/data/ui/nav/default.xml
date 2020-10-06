@@ -1,0 +1,10 @@
+<nav search_view="search">
+	<view name="monit_live_view" default='true' />
+	<view name="console" />
+	<view name="host" />
+	<view name="network" />
+	<view name="ping" />
+	<view name="protocol" />
+	<view name="search" />
+	<view name="dashboards" />
+</nav>

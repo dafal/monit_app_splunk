@@ -1,2 +1,4 @@
-./local
+local/
+local.meta
 ._*
+.DS_Store

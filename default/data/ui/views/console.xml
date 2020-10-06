@@ -1,0 +1,30 @@
+<form theme="dark">
+  <label>Console</label>
+  <fieldset submitButton="false">
+    <input type="text" token="free_form" searchWhenChanged="true">
+      <label>Free form search</label>
+      <default>*</default>
+    </input>
+    <input type="time" token="time_picker">
+      <label></label>
+      <default>
+        <earliest>rt-5m</earliest>
+        <latest>rt</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>index=monit $free_form$ | sort - _time |  table _time,host,message,check,test,status</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">100</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+</form>

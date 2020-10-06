@@ -1,0 +1,145 @@
+<dashboard theme="dark">
+  <label>Monit live view</label>
+  <description>Last 15 minutes real-time view</description>
+  <row>
+    <panel>
+      <title># Checks</title>
+      <single>
+        <search>
+          <query>index=monit check=* status=* | stats dc(check)</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+          <refresh>30s</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">checks</option>
+      </single>
+    </panel>
+    <panel>
+      <title># checks with failed test(s)</title>
+      <single>
+        <search>
+          <query>index=monit check=* | stats latest(status) as status by check | where status="failed" | stats count</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+          <refresh>30s</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="rangeColors">["0x53a051","0xdc4e41"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">failed check(s)</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+    <panel>
+      <title># skipped checks</title>
+      <single>
+        <search>
+          <query>index=monit check=* | fillnull value="" skipped_reason| stats latest(status) as status latest(skipped_reason) as skipped_reason by check | where status="skipped" | stats count</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+          <refresh>30s</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="rangeColors">["0x53a051","0xf1813f"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">skipped check(s)</option>
+        <option name="useColors">0</option>
+      </single>
+    </panel>
+    <panel>
+      <title># successful checks</title>
+      <single>
+        <search>
+          <query>index=monit check=* status=* | stats latest(status) as status by check | where status="success" | stats count</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+          <refresh>30s</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Failed tests</title>
+      <table>
+        <search>
+          <query>index=monit check=* | fillnull value="" info | stats latest(status) as status latest(_time) as _time latest(info) as info by check,test | where status="failed" | sort -time | table check,status,_time,test,info</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+          <refresh>30s</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+        <format type="color" field="check">
+          <colorPalette type="map"></colorPalette>
+        </format>
+        <format type="color" field="status">
+          <colorPalette type="map">{"failed":#DC4E41}</colorPalette>
+        </format>
+      </table>
+    </panel>
+    <panel>
+      <title>Skipped tests</title>
+      <table>
+        <search>
+          <query>index=monit check=* [|search index=monit check=* | stats latest(status) as latest_status, by check | search latest_status="skipped" | fields check ]
+| stats latest(_time) as _time latest(skipped_reason) as skipped_reason latest(info) as info by check,status
+| filldown skipped_reason
+| where status!="skipped" 
+| stats latest(status) as status latest(_time) as _time latest(skipped_reason) as skipped_reason latest(info) as info by check
+| eval when = tostring(now() - _time, "duration")
+| sort status,check
+| table check,status,when,skipped_reason,info</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <refresh>30s</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="wrap">true</option>
+        <format type="color" field="latest_status">
+          <colorPalette type="map">{"success":#53A051,"failed":#DC4E41}</colorPalette>
+        </format>
+        <format type="color" field="status">
+          <colorPalette type="map">{"success":#53A051,"failed":#DC4E41}</colorPalette>
+        </format>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>All the checks</title>
+      <table>
+        <search>
+          <query>index=monit check=* test=* status=* | stats latest(_time) as _time latest(status) as status latest(value) as value by host,check,test | sort status,check</query>
+          <earliest>rt-1h</earliest>
+          <latest>rt</latest>
+        </search>
+        <option name="count">50</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <format type="color" field="status">
+          <colorPalette type="map">{"success":#53A051,"failed":#DC4E41}</colorPalette>
+        </format>
+      </table>
+    </panel>
+  </row>
+</dashboard>

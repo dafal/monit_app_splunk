@@ -1,0 +1,69 @@
+<form theme="dark">
+  <label>Ping</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="host" searchWhenChanged="true">
+      <label>Host</label>
+      <fieldForLabel>host</fieldForLabel>
+      <fieldForValue>host</fieldForValue>
+      <search>
+        <query>index=monit test=ping | stats count by host | fields host</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+    <input type="dropdown" token="check">
+      <label>Check</label>
+      <fieldForLabel>check</fieldForLabel>
+      <fieldForValue>check</fieldForValue>
+      <search>
+        <query>index=monit host=$host$ test=ping | stats count by check</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+    <input type="dropdown" token="span">
+      <label>Span</label>
+      <choice value="5m">5 minutes</choice>
+      <choice value="15m">15 minutes</choice>
+      <choice value="1h">1 hour</choice>
+      <choice value="6h">6 hours</choice>
+      <choice value="1d">1 day</choice>
+      <default>5m</default>
+    </input>
+    <input type="time" token="field1">
+      <label></label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <chart>
+        <search>
+          <query>index=monit check="$check$" test=ping response_time_ms=* | timechart span=$span$ avg(response_time_ms) as avg_response_time_ms</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <search>
+          <query>index=monit check="$check$" test=ping failed=1 | timechart max(failed) as failed</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="charting.chart">column</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+</form>
