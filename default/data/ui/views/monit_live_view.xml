@@ -126,7 +126,7 @@
       <table>
         <search>
           <query>index=monit check=* test=* status=* | stats latest(_time) as _time latest(status) as status latest(value) as value by host,check,test | sort status,check</query>
-          <earliest>rt-1h</earliest>
+          <earliest>rt-15m</earliest>
           <latest>rt</latest>
         </search>
         <option name="count">50</option>

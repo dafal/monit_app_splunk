@@ -17,7 +17,7 @@
     <panel>
       <table>
         <search>
-          <query>index=monit $free_form$ | sort - _time |  table _time,host,message,check,test,status</query>
+          <query>index=monit $free_form$ | sort - _time |  table _time,host,message,check,test,status,value</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
