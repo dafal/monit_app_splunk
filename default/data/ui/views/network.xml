@@ -11,7 +11,7 @@
         <latest>now</latest>
       </search>
     </input>
-    <input type="dropdown" token="check">
+    <input type="dropdown" token="check" searchWhenChanged="true">
       <label>Check</label>
       <fieldForLabel>check</fieldForLabel>
       <fieldForValue>check</fieldForValue>
@@ -21,7 +21,7 @@
         <latest>now</latest>
       </search>
     </input>
-    <input type="dropdown" token="span">
+    <input type="dropdown" token="span" searchWhenChanged="true">
       <label>Span</label>
       <choice value="5m">5 minutes</choice>
       <choice value="15m">15 minutes</choice>
@@ -30,7 +30,7 @@
       <choice value="1d">1 day</choice>
       <default>5m</default>
     </input>
-    <input type="time" token="field1">
+    <input type="time" token="field1" searchWhenChanged="true">
       <label></label>
       <default>
         <earliest>-24h@h</earliest>

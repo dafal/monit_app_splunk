@@ -139,7 +139,7 @@
     <panel>
       <table>
         <search>
-          <query>index=monit host=$host$ test=space_usage | stats last(value) as value by check</query>
+          <query>index=monit host=$host$ test=space_usage | stats latest(value) as value by check</query>
           <earliest>-15m</earliest>
           <latest>now</latest>
         </search>
